@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import axios from "axios";
 
-// Компонент формы для добавления нового товара
+//эта функция для добавления нового товара
 function ProductForm({ onAdd }) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -12,14 +12,17 @@ function ProductForm({ onAdd }) {
   const [size, setSize] = useState("30");
   const [error, setError] = useState("");
 
+  // Функция для обработки отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Проверка на заполненность полей
     if (!name || !price || !imageUrl || !description || !size || !category) {
       setError("Пожалуйста, заполните все поля.");
       return;
     }
 
+    //данные о новом товаре
     const newProduct = {
       name,
       price: Number(price),
@@ -29,6 +32,7 @@ function ProductForm({ onAdd }) {
       sizes: [Number(size)],
     };
 
+    //отправляет данные на сервер с помощью axios и добавляет новый товар в список товаров
     try {
       const res = await axios.post("https://67fbd1781f8b41c81684f5de.mockapi.io/products", newProduct);
       onAdd(res.data);
@@ -46,9 +50,11 @@ function ProductForm({ onAdd }) {
   };
 
   return (
+    //форма для добавления нового товара
     <form onSubmit={handleSubmit}>
       <h3>Добавить товар</h3>
 
+        {/*Название товара, цена, изображение, описание, категория и размер*/}
       <input
         type="text"
         placeholder="Название"
@@ -70,6 +76,7 @@ function ProductForm({ onAdd }) {
         onChange={(e) => setImageUrl(e.target.value)}
       /><br />
 
+
       <textarea
         placeholder="Описание"
         value={description}
@@ -78,6 +85,7 @@ function ProductForm({ onAdd }) {
 
        <label>Категория: </label>
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        {/* Опции для выбора категории пиццы */}
         <option value="Сырная">Сырная</option>
         <option value="Мясная">Мясная</option>
         <option value="Вегетарианская">Вегетарианская</option>
@@ -85,6 +93,7 @@ function ProductForm({ onAdd }) {
 
       <label>Размер:</label>
       <select value={size} onChange={(e) => setSize(e.target.value)}>
+        {/* Опции для выбора размера пиццы */}
         <option value="30">30 см</option>
         <option value="40">40 см</option>
         <option value="50">50 см</option>

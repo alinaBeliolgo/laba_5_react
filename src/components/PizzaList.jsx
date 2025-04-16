@@ -17,24 +17,25 @@ import { useCallback } from "react";
 const API_URL = "https://67fbd1781f8b41c81684f5de.mockapi.io/api/v1/products";
 
 function PizzaList() {
-  const [pizzas, setPizzas] = useState([]);
-  const [filteredPizzas, setFilteredPizzas] = useState([]);
+  const [pizzas, setPizzas] = useState([]); // список всех пицц
+  const [filteredPizzas, setFilteredPizzas] = useState([]); // отфильтрованные пиццы
 
-
+  //добавление нового товара в список пицц
   const handleAddProduct = (newPizza) => {
     setPizzas([...pizzas, newPizza]);
     setFilteredPizzas([...pizzas, newPizza]);
   };
-// Simulate loading state
+
+  //это функция для загрузки данных с API
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => {
-        setPizzas(data);
-        setFilteredPizzas(data);
-        setLoading(false);
+        setPizzas(data); // сохраняем пиццы
+        setFilteredPizzas(data); // устанавливаем их в фильтрованный список
+        setLoading(false); // снимаем состояние загрузки
       })
       .catch((error) => {
         console.error("Ошибка загрузки:", error);
@@ -50,6 +51,7 @@ function PizzaList() {
   }, []);
 */
 
+  //это функция для обработки поиска пицц по имени
 const handleSearch = useCallback(
   debounce((query) => {
     const filtered = pizzas.filter((pizza) =>
