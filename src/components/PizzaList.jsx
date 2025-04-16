@@ -10,6 +10,10 @@ import "react-loading-skeleton/dist/skeleton.css";
 import ProductForm from "./ProductForm";
 
 
+import debounce from "lodash/debounce";
+import { useCallback } from "react";
+
+
 const API_URL = "https://67fbd1781f8b41c81684f5de.mockapi.io/api/v1/products";
 
 function PizzaList() {
@@ -19,8 +23,8 @@ function PizzaList() {
 
   const handleAddProduct = (newPizza) => {
     setPizzas([...pizzas, newPizza]);
+    setFilteredPizzas([...pizzas, newPizza]);
   };
-
 // Simulate loading state
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -46,38 +50,41 @@ function PizzaList() {
   }, []);
 */
 
-  const handleSearch = (query) => {
+const handleSearch = useCallback(
+  debounce((query) => {
     const filtered = pizzas.filter((pizza) =>
       pizza.name.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredPizzas(filtered);
-  };
+  }, 300), // 300 мс задержка
+  [pizzas]
+);
 
-  return (
-    <>
-      <ProductForm onAdd={handleAddProduct} />
-      <h2 className={styles.title}>Пиццы</h2>
 
-      <Search onSearch={handleSearch} />
-
-      {loading ? (
-        <div className={styles.pizzaList}>
-          {Array(6).fill().map((_, index) => (
-            <div key={index}>
-              <Skeleton height={200} />
-              <Skeleton count={2} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className={styles.pizzaList}>
-          {filteredPizzas.map((pizza) => (
-            <PizzaCard key={pizza.id} pizza={pizza} />
-          ))}
-        </div>
-      )}
-    </>
-  );
+return (
+  <>
+    <ProductForm onAdd={handleAddProduct} />
+    <h2 className={styles.title}>Пиццы</h2>
+    <Search onSearch={handleSearch} />
+    {loading ? (
+      <div className={styles.pizzaList}>
+        {Array(6).fill().map((_, index) => (
+          <div key={index}>
+            <Skeleton height={200} />
+            <Skeleton count={2} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className={styles.pizzaList}>
+        {filteredPizzas.map((pizza) => (
+          <PizzaCard key={pizza.id} pizza={pizza} />
+        ))}
+      </div>
+    )}
+  </>
+);
 }
+
 
 export default PizzaList;

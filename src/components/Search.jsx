@@ -1,9 +1,16 @@
 import React from "react";
+
+import debounce from "lodash/debounce";
 import styles from "./styles_modules/Search.module.css";
 
 function Search({ onSearch }) {
+  // Делаем debounce для обработки ввода.
+  const debouncedSearch = debounce((event) => {
+    onSearch(event.target.value); // передаем введённый текст в родительский компонент
+  }, 300); // задержка 300 мс
+
   const handleSearchChange = (event) => {
-    onSearch(event.target.value);
+    debouncedSearch(event); // вызываем дебаунс-обработчик
   };
 
   return (
